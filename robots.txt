@@ -1,0 +1,6 @@
+# PRÉVIA: fora dos buscadores. No go-live, trocar por:
+#   User-agent: *
+#   Allow: /
+#   Sitemap: https://<dominio>/sitemap.xml
+User-agent: *
+Disallow: /
