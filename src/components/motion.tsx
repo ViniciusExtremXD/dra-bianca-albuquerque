@@ -127,6 +127,7 @@ export function SplitWords({
           </React.Fragment>
         );
       })}
+      {/* Espaço final: títulos em vários blocos ("Dra. Bianca" + "Albuquerque") não grudam no texto lido por buscadores e leitores de tela. */}{" "}
     </span>
   );
 }
