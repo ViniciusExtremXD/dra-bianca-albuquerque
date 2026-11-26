@@ -8,7 +8,7 @@
     "dev": "vite --port 5182",
     "build": "tsc --noEmit && vite build && vite build --ssr src/entry-server.tsx --outDir dist-server && node scripts/prerender.mjs",
     "preview": "vite preview --port 5182",
-    "build:gh": "cross-env VITE_BASE=/dra-bianca-albuquerque/ npm run build",
+    "build:gh": "cross-env VITE_BASE=/dra-bianca-albuquerque/ VITE_SITE_URL=https://viniciusextremxd.github.io/dra-bianca-albuquerque/ npm run build",
     "deploy:gh": "npm run build:gh && gh-pages -d dist --nojekyll -m \"Deploy\"",
     "qa": "node scripts/qa-shots.mjs"
   },

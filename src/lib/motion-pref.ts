@@ -11,7 +11,7 @@ import { useReducedMotion } from "framer-motion";
  * Atenção: muitos PCs Windows informam "reduzir movimento" só porque os "efeitos de animação" do
  * Windows estão desligados. O navegador deste computador de trabalho informa isso (conferido em 26/11/2026).
  */
-export const RESPECT_REDUCED_MOTION = true;
+export const RESPECT_REDUCED_MOTION = false;
 
 /** true quando o site deve ficar na versão calma. */
 export function useCalm(): boolean {
