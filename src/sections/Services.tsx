@@ -132,7 +132,9 @@ function ServicePhoto({ kind }: { kind: ServiceMedia }) {
         height={991}
         loading="lazy"
         decoding="async"
-        className="aspect-[3/5] w-[170px] rounded-[999px_999px_1.25rem_1.25rem] object-cover object-[50%_30%] sm:w-[200px]"
+        /* Foto muito alta (348x991): moldura mais alta, ancorada no topo, para caber o rosto inteiro e o transdutor na barriga.
+           Sem arco no topo: o arco cortava a cabeça, que fica colada na borda direita da foto. */
+        className="aspect-[9/20] w-[170px] rounded-[1.5rem] object-cover object-[50%_0%] sm:w-[200px]"
       />
     );
   }
