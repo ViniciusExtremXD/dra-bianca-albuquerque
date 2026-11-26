@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Plus Jakarta Sans Variable", system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: #faf7f3;
+    color: #2e2829;
+    overflow-x: clip;
+  }
+
+  /*
+   * Fraunces fina e com contraste alto, como a serifada dos carrosséis da Dra. Bianca.
+   * O eixo de tamanho óptico (opsz) acompanha o font-size: quanto maior o título, mais finas as hastes.
+   */
+  .font-display {
+    font-family: "Fraunces Variable", Georgia, serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+  }
+
+  :focus-visible {
+    outline: 2px solid #8e5a5b;
+    outline-offset: 3px;
+    border-radius: 10px;
+  }
+
+  ::selection {
+    background: #ead2cd;
+    color: #2e2829;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+    mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  }
+}
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Textura de papel bem sutil, como o fundo dos posts (só em telas grandes: camada fixa custa no celular) */
+@media (min-width: 768px) and (hover: hover) {
+  .paper::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+}
+
+/* Brilho de fundo sem filter: gradiente radial é quase de graça, blur grande não é. */
+.glow {
+  background: radial-gradient(closest-side, rgb(var(--glow) / var(--glow-a, 0.5)), rgb(var(--glow) / 0));
+}
+
+/* Abertura: se por algum motivo o JavaScript não tirar a cortina, ela some sozinha depois de 6 s. */
+@keyframes preloader-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+.bianca-preloader {
+  animation: preloader-failsafe 0.6s ease 6s forwards;
+}
+
+/* Animação infinita fora da tela fica em pausa (ver lib/visibility.ts). */
+.anim-paused {
+  animation-play-state: paused !important;
+}
+
+/* Arco (topo redondo) usado nas fotos, como janelas */
+.arch {
+  border-radius: 999px 999px 2rem 2rem;
+}
+
+/* Versão calma (ver src/lib/motion-pref.ts): nada de loop infinito para quem pediu menos movimento. */
+@media (prefers-reduced-motion: reduce) {
+  html:not(.motion-full) .animate-spin-slow,
+  html:not(.motion-full) .animate-breathe,
+  html:not(.motion-full) .animate-drift,
+  html:not(.motion-full) .animate-pulse-ring,
+  html:not(.motion-full) .animate-typing {
+    animation: none !important;
+  }
+}
+
+/* Seções recebem foco ao navegar pelo menu (acessibilidade), mas sem contorno na seção inteira */
+section[tabindex="-1"]:focus {
+  outline: none;
+}
