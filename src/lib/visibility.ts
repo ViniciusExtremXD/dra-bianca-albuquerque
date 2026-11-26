@@ -3,13 +3,7 @@
  * Fora dela, recebem a classe `anim-paused` (animation-play-state: paused), o que tira
  * o custo de estilo e pintura de dezenas de elementos decorativos que ninguém está vendo.
  */
-const SELECTOR = [
-  ".animate-spin-slow",
-  ".animate-pulse-ring",
-  ".animate-breathe",
-  ".animate-drift",
-  ".animate-typing",
-].join(",");
+const SELECTOR = [".animate-drift", ".animate-pulse-ring"].join(",");
 
 export function pauseOffscreenAnimations() {
   if (typeof IntersectionObserver === "undefined") return () => {};

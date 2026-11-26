@@ -47,6 +47,27 @@ export function Reveal({
 }
 
 /*
+ * Divide o texto em palavras e marca os trechos entre *asteriscos* como destaque. O destaque pode
+ * ficar dentro de uma palavra ("Pré-*natal*") ou atravessar várias ("*ainda não conhece*").
+ */
+function splitAccents(text: string): { text: string; accent: boolean }[][] {
+  let accent = false;
+  return text.split(" ").map((raw) => {
+    const parts: { text: string; accent: boolean }[] = [];
+    let buf = "";
+    for (const ch of raw) {
+      if (ch === "*") {
+        if (buf) parts.push({ text: buf, accent });
+        buf = "";
+        accent = !accent;
+      } else buf += ch;
+    }
+    if (buf) parts.push({ text: buf, accent });
+    return parts;
+  });
+}
+
+/*
  * Títulos palavra por palavra, subindo de dentro de uma máscara.
  * Palavras entre *asteriscos* ficam em itálico, como nos carrosséis ("Pré-*natal*").
  */
@@ -71,7 +92,7 @@ export function SplitWords({
   const calm = useCalm();
   const inView = useInView(ref, { once: true, margin: "0px 0px -10% 0px" });
   const show = immediate || inView;
-  const words = text.split(" ");
+  const words = splitAccents(text);
   const plain = text.replace(/\*/g, "");
   // Mesmo ponto de partida no servidor e no navegador (senão a hidratação guarda o transform do HTML pré-renderizado).
   // Na versão calma o MotionConfig pula o deslocamento e sobra só o fade de cada palavra.
@@ -79,10 +100,8 @@ export function SplitWords({
   const to = { y: "0%", opacity: 1 };
   return (
     <span ref={ref} className={className} aria-label={plain} role="text">
-      {words.map((raw, i) => {
-        const word = raw.replace(/\*/g, "");
-        // Trechos entre asteriscos viram itálico, inclusive dentro da palavra ("Pré-*natal*").
-        const parts = raw.split(/(\*[^*]+\*)/).filter(Boolean);
+      {words.map((parts, i) => {
+        const word = parts.map((p) => p.text).join("");
         return (
           <React.Fragment key={`${word}-${i}`}>
             {/* O espaço fica FORA do inline-block (dentro dele, o navegador descarta o espaço do fim). */}
@@ -94,12 +113,12 @@ export function SplitWords({
                 transition={{ duration: calm ? 0.9 : 1.2, ease: EASE_SOFT, delay: delay + i * stagger }}
               >
                 {parts.map((p, j) =>
-                  p.startsWith("*") && p.endsWith("*") ? (
+                  p.accent ? (
                     <span key={j} className={accentClassName}>
-                      {p.slice(1, -1)}
+                      {p.text}
                     </span>
                   ) : (
-                    p
+                    p.text
                   ),
                 )}
               </motion.span>
@@ -214,20 +233,34 @@ export function VelocityMarquee({ children, baseVelocity = -1, className }: { ch
   );
 }
 
-/* Rótulo de seção: itálico fino com um fio, sem numeração. */
-export function Kicker({ children, tone = "light", className }: { children: React.ReactNode; tone?: "light" | "dark"; className?: string }) {
+/* Rótulo de seção em versalete espaçado ("SAÚDE DA MULHER ♡"), com um fio que se desenha. */
+export function Kicker({
+  children,
+  tone = "plum",
+  className,
+  line = true,
+}: {
+  children: React.ReactNode;
+  tone?: "plum" | "cream" | "deep" | "ink";
+  className?: string;
+  line?: boolean;
+}) {
+  // "ink" para o bloco rosa #B37D7B (texto pequeno creme ali não passa no contraste)
+  const color = { plum: "text-rose-500", cream: "text-cream", deep: "text-rose-600", ink: "text-ink-deep" }[tone];
   return (
     <Reveal y={10} className={className}>
-      <p className={`font-display flex items-center gap-3 text-[1.15rem] italic ${tone === "dark" ? "text-rose-300" : "text-rose-600"}`}>
-        <motion.span
-          aria-hidden
-          className={`h-px w-10 origin-left ${tone === "dark" ? "bg-rose-300/60" : "bg-rose-400"}`}
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.1, ease: EASE_SOFT, delay: 0.15 }}
-        />
-        {children}
+      <p className={`caps flex items-center gap-4 ${color}`}>
+        {line && (
+          <motion.span
+            aria-hidden
+            className="h-px w-12 origin-left bg-current opacity-60"
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.4, ease: EASE_SOFT, delay: 0.15 }}
+          />
+        )}
+        <span>{children}</span>
       </p>
     </Reveal>
   );
@@ -236,10 +269,12 @@ export function Kicker({ children, tone = "light", className }: { children: Reac
 /* Imagem que desliza levemente durante a rolagem (parallax). Parada com "reduzir movimento". */
 export function ParallaxImage({
   src,
+  srcSet,
+  sizes,
   alt,
   className,
   imgClassName,
-  amount = 8,
+  amount = 6,
   eager = false,
   position = "center",
   width,
@@ -247,6 +282,8 @@ export function ParallaxImage({
   zoom = 1,
 }: {
   src: string;
+  srcSet?: string;
+  sizes?: string;
   alt: string;
   className?: string;
   imgClassName?: string;
@@ -267,11 +304,13 @@ export function ParallaxImage({
     <div ref={ref} className={`relative overflow-hidden ${className ?? ""}`}>
       <motion.img
         src={src}
+        srcSet={srcSet}
+        sizes={sizes}
         alt={alt}
         width={width}
         height={height}
         /* Sem loading="lazy": dentro de um recorte (clip-path) fechado o navegador só baixa a foto depois que o
-           recorte abre, e a revelação anima uma caixa vazia. As fotos são leves (25 a 60 kB). */
+           recorte abre, e a revelação anima uma caixa vazia. As fotos de 720 px têm 20 a 50 kB. */
         {...{ fetchpriority: eager ? "high" : "low" }}
         decoding="async"
         style={{ y, scale: (1 + a / 40) * zoom, objectPosition: position }}
@@ -315,14 +354,28 @@ export function ClipReveal({
   );
 }
 
-/* Florzinha de quatro pétalas, separador da faixa e ornamento (desenhada aqui, nenhum ícone de banco). */
-export function Petal({ className }: { className?: string }) {
+/*
+ * Transição suave entre blocos de cor: uma curva larga, da cor da seção, que sobe sobre a seção anterior.
+ * Usar dentro de uma <section className="relative">, com `fill` igual ao fundo dela.
+ */
+export function CurveTop({ fill, className, flip = false }: { fill: string; className?: string; flip?: boolean }) {
   return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden>
-      <path
-        fill="currentColor"
-        d="M12 2c1.6 3.2 1.6 6.4 0 9.2C10.4 8.4 10.4 5.2 12 2Zm0 20c-1.6-3.2-1.6-6.4 0-9.2 1.6 2.8 1.6 6 0 9.2ZM2 12c3.2-1.6 6.4-1.6 9.2 0-2.8 1.6-6 1.6-9.2 0Zm20 0c-3.2 1.6-6.4 1.6-9.2 0 2.8-1.6 6-1.6 9.2 0Z"
-      />
+    <svg
+      aria-hidden
+      viewBox="0 0 1440 120"
+      preserveAspectRatio="none"
+      className={`pointer-events-none absolute inset-x-0 -top-[59px] block h-[60px] w-full sm:-top-[89px] sm:h-[90px] lg:-top-[119px] lg:h-[120px] ${className ?? ""}`}
+    >
+      <path d={flip ? "M0 120 C 420 120 900 0 1440 0 V120 Z" : "M0 120 C 260 30 620 0 720 0 C 820 0 1180 30 1440 120 Z"} fill={fill} />
+    </svg>
+  );
+}
+
+/* Coraçãozinho fino do brand ("Saúde da Mulher ♡") */
+export function Heart({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden fill="none" stroke="currentColor" strokeWidth={1.4}>
+      <path d="M12 20s-7-4.4-9-8.8C1.6 8 3.6 4.8 6.8 4.8c2 0 3.4 1.1 5.2 3 1.8-1.9 3.2-3 5.2-3 3.2 0 5.2 3.2 3.8 6.4C19 15.6 12 20 12 20Z" />
     </svg>
   );
 }

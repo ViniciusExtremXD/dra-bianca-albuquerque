@@ -6,3 +6,6 @@ Thumbs.db
 *.log
 .claude/settings.local.json
 qa/qa-report.json
+
+# Originais que não vão para o site (o consultório original mostra a paciente)
+fontes-originais/

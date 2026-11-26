@@ -1,75 +1,90 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight, NavigationArrow } from "@phosphor-icons/react";
-import { DOCTOR, MATERNITIES, assetUrl } from "../data/site";
-import { ClipReveal, EASE_SOFT, Kicker, ParallaxImage, Petal, Reveal, SplitWords } from "../components/motion";
+import { NavigationArrow } from "@phosphor-icons/react";
+import { DOCTOR, MATERNITIES, assetUrl, shoot } from "../data/site";
+import { ClipReveal, CurveTop, EASE_SOFT, Kicker, ParallaxImage, Reveal, SplitWords } from "../components/motion";
 import { MapsLink } from "../components/cta";
+import { Seal } from "../components/brand";
 
-/* "Hoje, atuo nas principais maternidades de Macapá": a frase do carrossel vira o título, com os mesmos itálicos. */
+const PORTRAIT = shoot("terno-bege-sorriso");
+
+/*
+ * "Ambiente pensado na sua experiência" (rascunho do Canva) + onde atendo.
+ * Bloco blush #E3C0BA: texto ink (8,6:1); rosa pequeno = rose-600 (5:1); títulos ameixa só grandes (3,4:1).
+ * A foto do consultório é um recorte (public/images/consultorio-recorte.webp) sem a paciente.
+ */
 export function Places() {
   return (
-    <section id="onde-atendo" className="relative overflow-hidden bg-cream-100 py-24 sm:py-32">
-      <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-12 lg:gap-16">
-        <div className="relative isolate mx-auto w-full max-w-[360px] lg:col-span-5 lg:max-w-none">
-          {/* Arco blush atrás da foto */}
-          <div aria-hidden className="arch absolute -inset-x-5 -bottom-5 top-10 -z-10 bg-rose-100" />
-          <ClipReveal from="bottom" radius={40} className="aspect-[3/4]">
-            <ParallaxImage
-              src={assetUrl("images/bianca-cadeira.webp")}
-              alt="Dra. Bianca Albuquerque sentada numa cadeira, sorrindo"
-              width={475}
-              height={1112}
-              amount={5}
-              zoom={1.06}
-              position="60% 0%"
-              className="h-full w-full rounded-[2.5rem] bg-cream-300"
-            />
-          </ClipReveal>
+    <section id="consultorio" className="relative overflow-x-clip bg-rose-200 pb-28 pt-16 sm:pb-36 sm:pt-20">
+      <CurveTop fill="#E3C0BA" />
+
+      <div className="mx-auto grid max-w-[88rem] items-center gap-14 px-5 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:px-12">
+        {/* O consultório real em destaque (no tamanho em que veio: 481 px) e um retrato do ensaio como acento */}
+        <div className="relative mx-auto w-full max-w-[520px] lg:col-span-6 lg:max-w-none">
+          <div className="relative ml-auto w-[76%] max-w-[400px] lg:mr-[6%]">
+            <ClipReveal from="arch" className="aspect-[481/590]">
+              <img
+                src={assetUrl("images/consultorio-recorte.webp")}
+                alt="Dra. Bianca Albuquerque atendendo à mesa no consultório"
+                width={481}
+                height={590}
+                decoding="async"
+                className="arch h-full w-full object-cover object-[50%_40%] shadow-card"
+              />
+            </ClipReveal>
+            <Seal className="absolute -left-8 top-[14%] w-[84px] -rotate-6 drop-shadow-[0_14px_16px_rgba(85,48,47,0.35)] sm:-left-12 sm:w-[110px]" />
+          </div>
+          <div className="absolute -bottom-10 left-0 w-[42%] max-w-[250px] sm:-bottom-14 lg:left-[2%]">
+            <ClipReveal from="bottom" radius={26} delay={0.25} className="aspect-[4/5] rounded-[1.6rem] shadow-lift ring-[6px] ring-rose-200">
+              <ParallaxImage
+                {...PORTRAIT}
+                sizes="(min-width: 1024px) 250px, 42vw"
+                alt="Retrato da Dra. Bianca Albuquerque de terno bege, sorrindo"
+                amount={4}
+                position="50% 20%"
+                className="h-full w-full rounded-[1.6rem] bg-cream-300"
+              />
+            </ClipReveal>
+          </div>
         </div>
 
-        <div className="lg:col-span-7">
-          <Kicker>onde atendo</Kicker>
-          <h2 className="font-display mt-5 text-[clamp(2.3rem,4.8vw,4.1rem)] leading-[1.06] tracking-tightest text-rose-500">
-            <SplitWords text="Hoje, *atuo* nas principais maternidades *de* Macapá" />
+        <div className="mt-10 lg:col-span-6 lg:mt-0">
+          <Kicker tone="deep">Consultório</Kicker>
+          <h2 className="font-display mt-6 text-[clamp(2.6rem,5.2vw,4.8rem)] leading-[1.02] tracking-tightest text-rose-500">
+            <SplitWords text="Ambiente pensado" className="block" />
+            <SplitWords text="na sua *experiência*" delay={0.15} className="block" accentClassName="italic text-rose-600" />
           </h2>
-          <Reveal className="mt-5 max-w-xl">
-            <p className="text-pretty text-lg leading-relaxed text-ink-soft">Bem Nascer, Maternidade Mãe Luzia e Hospital São Camilo, além do meu consultório.</p>
-          </Reveal>
-
-          {/* Consultório */}
-          <Reveal delay={0.1} className="mt-10 rounded-[2rem] bg-cream-50 p-6 shadow-card ring-1 ring-rose-600/5 sm:p-8">
-            <p className="font-display text-lg italic text-rose-600">consultório</p>
-            <p className="font-display mt-2 text-[1.75rem] leading-tight text-ink sm:text-3xl">{DOCTOR.address.street}</p>
-            <p className="mt-1.5 text-ink-soft">
-              {DOCTOR.address.district} · {DOCTOR.address.city} · CEP {DOCTOR.address.cep}
+          <Reveal delay={0.1}>
+            <p className="mt-7 max-w-[34rem] text-pretty text-[18px] leading-relaxed text-ink lg:text-[19px]">
+              Atendo no <strong className="font-semibold">{DOCTOR.clinic}</strong>, no Centro de Macapá, num espaço pensado para você se sentir à vontade em cada consulta.
             </p>
-            <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2">
-              <MapsLink
-                location="onde_atendo"
-                className="inline-flex h-12 items-center gap-2 rounded-full bg-rose-600 px-5 text-sm font-semibold text-white shadow-rose transition-colors hover:bg-rose-700"
-              >
-                <NavigationArrow weight="fill" className="h-4 w-4" /> Como chegar
-              </MapsLink>
-              <a href="#contato" className="group inline-flex min-h-[44px] items-center gap-1.5 text-sm font-semibold text-rose-700">
-                Ver no mapa
-                <ArrowUpRight weight="bold" className="h-3.5 w-3.5 rotate-90 transition-transform duration-500 group-hover:translate-y-0.5" />
-              </a>
-            </div>
           </Reveal>
 
-          {/* Maternidades */}
-          <p className="font-display mt-12 text-lg italic text-rose-600">maternidades</p>
-          <ul className="mt-3 border-t border-rose-600/15">
+          <Reveal delay={0.15} className="mt-9 rounded-[2rem] bg-cream p-6 shadow-card sm:p-8">
+            <p className="caps text-rose-500">{DOCTOR.clinic}</p>
+            <p className="font-display mt-3 text-[1.7rem] leading-tight text-ink sm:text-[2rem]">{DOCTOR.address.street}</p>
+            <p className="mt-1.5 text-ink-soft">
+              {DOCTOR.address.district} · {DOCTOR.address.city} · {DOCTOR.address.cep}
+            </p>
+            <MapsLink
+              location="consultorio"
+              className="mt-6 inline-flex h-12 items-center gap-2 rounded-full border border-rose-500/30 px-5 text-[14px] font-semibold text-rose-500 transition-colors duration-500 hover:bg-rose-500 hover:text-cream"
+            >
+              <NavigationArrow weight="fill" className="h-4 w-4" /> Como chegar
+            </MapsLink>
+          </Reveal>
+
+          <p className="caps mt-12 text-rose-600">Também atuo nas maternidades</p>
+          <ul className="mt-4 border-t border-rose-600/25">
             {MATERNITIES.map((m, i) => (
               <motion.li
                 key={m}
-                initial={{ opacity: 0, y: 18 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-                transition={{ duration: 1, ease: EASE_SOFT, delay: i * 0.1 }}
-                className="group flex items-center gap-4 border-b border-rose-600/15 py-5"
+                transition={{ duration: 1.1, ease: EASE_SOFT, delay: i * 0.1 }}
+                className="group border-b border-rose-600/25"
               >
-                <Petal className="h-4 w-4 shrink-0 text-rose-400 transition-transform duration-700 group-hover:rotate-90" />
-                <span className="font-display text-[1.6rem] leading-tight text-ink transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1.5 sm:text-[2rem]">
+                <span className="font-display block py-4 text-[1.6rem] leading-tight text-ink transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-2 sm:text-[2rem]">
                   {m}
                 </span>
               </motion.li>

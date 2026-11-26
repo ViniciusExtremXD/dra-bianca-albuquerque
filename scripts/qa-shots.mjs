@@ -71,7 +71,7 @@ async function shot(name) {
 async function scrollTo(selector, offset = 0) {
   await evalJs(`(() => { const el = document.querySelector(${JSON.stringify(selector)}); const y = el.getBoundingClientRect().top + window.scrollY - ${offset}; window.scrollTo(0, y); })()`);
   // rolagem em etapas para disparar os "whileInView" de tudo que passou pela tela
-  await sleep(2200);
+  await sleep(3400);
 }
 
 const CHECKS = `(() => {
@@ -99,7 +99,8 @@ const CHECKS = `(() => {
 })()`;
 
 const report = [];
-for (const motion of ["no-preference", "reduce"]) {
+// Movimento completo para todos (RESPECT_REDUCED_MOTION = false), então basta uma passada.
+for (const motion of ["no-preference"]) {
   await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: motion }] });
   const widths = motion === "reduce" ? [390, 1440] : [320, 360, 390, 1440];
   for (const w of widths) {
@@ -117,14 +118,15 @@ for (const motion of ["no-preference", "reduce"]) {
     const checks = await evalJs(CHECKS);
     if (motion === "no-preference" && (w === 390 || w === 1440)) {
       for (const [sel, name, off] of [
-        ["#atendimentos", "atendimentos", -40],
-        ["#prevencao", "planejamento", 90],
-        ["#sobre", "sobre", -20],
-        ["#sobre ol", "historia", 140],
-        ["#onde-atendo", "onde-atendo", -20],
-        ["#como-agendar", "como-agendar", -20],
-        ["#duvidas", "duvidas", -20],
-        ["#contato", "contato", -20],
+        ["#sobre", "sobre", -10],
+        ["#missao", "missao", 40],
+        ["#atendimentos", "atendimentos", 40],
+        ["#atendimentos ul", "atendimentos-lista", 120],
+        ["#historia", "historia", 40],
+        ["#historia ol", "historia-linha", 160],
+        ["#consultorio", "consultorio", 40],
+        ["#duvidas", "duvidas", 40],
+        ["#contato", "contato", 40],
         ["footer", "rodape", 0],
       ]) {
         try {

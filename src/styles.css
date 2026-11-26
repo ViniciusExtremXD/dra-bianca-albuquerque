@@ -4,35 +4,61 @@
 
 @layer base {
   html {
-    font-family: "Plus Jakarta Sans Variable", system-ui, sans-serif;
+    font-family: -apple-system, "SF Pro Display", BlinkMacSystemFont, "Inter Variable", Inter, system-ui, sans-serif;
     -webkit-tap-highlight-color: transparent;
+    font-feature-settings: "ss01", "cv11";
   }
 
   body {
-    background: #faf7f3;
+    background: #fcfaf7;
     color: #2e2829;
     overflow-x: clip;
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  @media (min-width: 1024px) {
+    body {
+      font-size: 18px;
+    }
   }
 
   /*
-   * Fraunces fina e com contraste alto, como a serifada dos carrosséis da Dra. Bianca.
-   * O eixo de tamanho óptico (opsz) acompanha o font-size: quanto maior o título, mais finas as hastes.
+   * Fraunces fina e de alto contraste, no papel da Editor's Note do brand kit.
+   * O tamanho óptico acompanha o font-size: quanto maior o título, mais finas as hastes.
    */
   .font-display {
     font-family: "Fraunces Variable", Georgia, serif;
     font-optical-sizing: auto;
     font-weight: 300;
+    font-variation-settings: "SOFT" 0, "WONK" 0;
   }
 
   :focus-visible {
-    outline: 2px solid #8e5a5b;
+    outline: 2px solid #8e5755;
     outline-offset: 3px;
     border-radius: 10px;
   }
 
   ::selection {
-    background: #ead2cd;
+    background: #e3c0ba;
     color: #2e2829;
+  }
+}
+
+@layer components {
+  /* Rótulo em versalete com espaçamento: "SAÚDE DA MULHER ♡" */
+  .caps {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+  /* Fio fino */
+  .hairline {
+    height: 1px;
+    background: currentColor;
+    opacity: 0.22;
   }
 }
 
@@ -42,10 +68,6 @@
   }
   .text-pretty {
     text-wrap: pretty;
-  }
-  .mask-fade-b {
-    -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
-    mask-image: linear-gradient(to bottom, #000 55%, transparent);
   }
 }
 
@@ -64,7 +86,7 @@ html.lenis body {
   overflow: hidden;
 }
 
-/* Textura de papel bem sutil, como o fundo dos posts (só em telas grandes: camada fixa custa no celular) */
+/* Grão de papel bem sutil (só em telas grandes: camada fixa custa no celular) */
 @media (min-width: 768px) and (hover: hover) {
   .paper::after {
     content: "";
@@ -72,7 +94,7 @@ html.lenis body {
     inset: 0;
     z-index: 60;
     pointer-events: none;
-    opacity: 0.03;
+    opacity: 0.035;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   }
 }
@@ -101,16 +123,20 @@ html.lenis body {
 
 /* Arco (topo redondo) usado nas fotos, como janelas */
 .arch {
-  border-radius: 999px 999px 2rem 2rem;
+  border-radius: 999px 999px 1.75rem 1.75rem;
+}
+
+/* Com o aviso de cookies aberto no celular, a barra do WhatsApp sobe para não ficar por baixo dele. */
+@media (max-width: 767px) {
+  html[data-cookie="open"] .wa-bar {
+    bottom: var(--cookie-h, 0px);
+  }
 }
 
 /* Versão calma (ver src/lib/motion-pref.ts): nada de loop infinito para quem pediu menos movimento. */
 @media (prefers-reduced-motion: reduce) {
-  html:not(.motion-full) .animate-spin-slow,
-  html:not(.motion-full) .animate-breathe,
   html:not(.motion-full) .animate-drift,
-  html:not(.motion-full) .animate-pulse-ring,
-  html:not(.motion-full) .animate-typing {
+  html:not(.motion-full) .animate-pulse-ring {
     animation: none !important;
   }
 }

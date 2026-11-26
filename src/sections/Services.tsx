@@ -1,181 +1,150 @@
-import { motion } from "framer-motion";
-import { CARE, PRENATAL, SURGERY, assetUrl } from "../data/site";
-import { ClipReveal, EASE_SOFT, Kicker, ParallaxImage, Petal, Reveal, SplitWords } from "../components/motion";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Plus } from "@phosphor-icons/react";
+import { SERVICES, assetUrl, shoot, type ServiceMedia } from "../data/site";
+import { ClipReveal, CurveTop, EASE_SOFT, Kicker, ParallaxImage, Reveal, SplitWords } from "../components/motion";
 import { PrimaryCta } from "../components/cta";
 
+const PHOTO = shoot("anotando-tablet");
+
 /*
- * Três blocos com ritmos diferentes, nada de grade de cartões com ícone:
- *  1. Pré-natal: foto do ultrassom em arco + o título enorme como nos carrosséis ("Pré-*natal*").
- *  2. Prevenção e planejamento: painel blush com três colunas editoriais (ginecologia, DIU, Implanon).
- *  3. Cirurgia: texto + foto do centro cirúrgico.
- * Os botões levam todos a mesma mensagem e o mesmo `location` ("atendimentos"): nenhum nome de procedimento sai na medição.
+ * "Como posso te ajudar na sua jornada" (rascunho do Canva): bloco rosa #B37D7B, títulos creme grandes,
+ * lista que abre. Regra de contraste: creme sobre #B37D7B só em texto GRANDE; texto pequeno vai em ink-deep
+ * (4,7:1) ou dentro do painel ameixa (5,5:1).
+ * Botões: mesma mensagem e mesmo `location` ("atendimentos"); nenhum nome de procedimento sai na medição.
  */
 export function Services() {
+  const [open, setOpen] = useState(0);
   return (
-    <section id="atendimentos" className="relative overflow-hidden bg-cream-100 py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="grid items-end gap-8 lg:grid-cols-12">
-          <div className="lg:col-span-7">
-            <Kicker>atendimentos</Kicker>
-            <h2 className="font-display mt-5 text-[clamp(2.4rem,5vw,4.3rem)] leading-[1.04] tracking-tightest text-rose-500">
-              <SplitWords text="Como posso *cuidar* de você" />
-            </h2>
+    <section id="atendimentos" className="relative overflow-x-clip bg-rose-400 pb-28 pt-16 text-cream sm:pb-36 sm:pt-20">
+      <CurveTop fill="#B37D7B" />
+
+      <div className="relative mx-auto grid max-w-[88rem] gap-14 px-5 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:px-12">
+        <div className="lg:col-span-5">
+          <div className="lg:sticky lg:top-28">
+            <ClipReveal from="arch" className="mx-auto aspect-[4/5] w-full max-w-[420px] lg:aspect-[4/5.3] lg:max-w-none">
+              <ParallaxImage
+                {...PHOTO}
+                sizes="(min-width: 1024px) 34vw, 90vw"
+                alt="Dra. Bianca Albuquerque sorrindo enquanto anota num tablet"
+                amount={5}
+                position="50% 20%"
+                className="arch h-full w-full bg-cream-300"
+              />
+            </ClipReveal>
           </div>
-          <Reveal className="lg:col-span-5 lg:pb-3">
-            <p className="max-w-md text-pretty text-lg leading-relaxed text-ink-soft">
-              Da consulta de rotina ao pré-natal, da escolha do método contraceptivo à cirurgia ginecológica. Cada atendimento começa com uma boa conversa.
-            </p>
-          </Reveal>
         </div>
 
-        <PreNatal />
-        <Planning />
-        <Surgery />
+        <div className="lg:col-span-7 lg:pt-6">
+          <Kicker tone="ink">Atendimentos</Kicker>
+          <h2 className="font-display mt-6 text-[clamp(2.7rem,5.6vw,5.2rem)] leading-[1] tracking-tightest text-cream">
+            <SplitWords text="Como posso" className="block" />
+            <SplitWords text="*te ajudar* na sua" delay={0.12} className="block" accentClassName="italic" />
+            <SplitWords text="jornada" delay={0.24} className="block" />
+          </h2>
+          <Reveal delay={0.1}>
+            <p className="mt-7 max-w-[34rem] text-pretty text-[18px] leading-relaxed text-ink-deep lg:text-[19px]">
+              Do pré-natal à prevenção, da escolha do método contraceptivo à cirurgia. Toque em cada atendimento para saber mais.
+            </p>
+          </Reveal>
+
+          <ul className="mt-12 border-t border-cream/40">
+            {SERVICES.map((s, i) => {
+              const on = open === i;
+              const id = `servico-${s.id}`;
+              return (
+                <Reveal as="li" key={s.id} delay={i * 0.05} className="border-b border-cream/40">
+                  <h3>
+                    <button
+                      type="button"
+                      id={`${id}-t`}
+                      aria-expanded={on}
+                      aria-controls={`${id}-p`}
+                      onClick={() => setOpen(on ? -1 : i)}
+                      className="group flex w-full items-center gap-5 py-6 text-left sm:py-7"
+                    >
+                      <span className="min-w-0 flex-1">
+                        <span className="font-display block text-[1.75rem] leading-tight text-cream transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1.5 sm:text-[2.35rem]">
+                          {s.name}
+                        </span>
+                        <span className="caps mt-2 block text-ink-deep">{s.short}</span>
+                      </span>
+                      <span
+                        className={`grid h-12 w-12 shrink-0 place-items-center rounded-full border transition-[transform,background-color,color,border-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                          on ? "rotate-45 border-cream bg-cream text-rose-500" : "border-cream/60 text-cream group-hover:bg-cream/15"
+                        }`}
+                      >
+                        <Plus weight="light" className="h-5 w-5" />
+                      </span>
+                    </button>
+                  </h3>
+                  <AnimatePresence initial={false}>
+                    {on && (
+                      <motion.div
+                        id={`${id}-p`}
+                        role="region"
+                        aria-labelledby={`${id}-t`}
+                        className="overflow-hidden"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.7, ease: EASE_SOFT }}
+                      >
+                        <div className={`mb-7 grid gap-6 rounded-[1.75rem] bg-rose-500 p-6 sm:p-8 ${s.media ? "sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center" : ""}`}>
+                          <div>
+                            {s.text.map((t) => (
+                              <p key={t} className="text-pretty text-[17px] leading-relaxed text-cream lg:text-[18px] [&+p]:mt-3">
+                                {t}
+                              </p>
+                            ))}
+                            {s.note && <p className="font-display mt-5 text-[1.3rem] italic leading-snug text-cream">{s.note}</p>}
+                          </div>
+                          {s.media && <ServicePhoto kind={s.media} />}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </Reveal>
+              );
+            })}
+          </ul>
+
+          <Reveal className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
+            <PrimaryCta location="atendimentos" tone="cream">
+              Agendar consulta
+            </PrimaryCta>
+            <p className="font-display text-[1.65rem] italic leading-snug text-cream">Gravidez ou prevenção? Te ajudo a decidir.</p>
+          </Reveal>
+        </div>
       </div>
     </section>
   );
 }
 
-function PreNatal() {
+/* Fotos de trabalho pequenas, no tamanho em que vieram (o ultrassom tem só 348 px: nunca ampliar). */
+function ServicePhoto({ kind }: { kind: ServiceMedia }) {
+  if (kind === "ultrassom") {
+    return (
+      <img
+        src={assetUrl("images/bianca-pre-natal.webp")}
+        alt="Dra. Bianca Albuquerque fazendo ultrassom na barriga de uma gestante"
+        width={348}
+        height={991}
+        loading="lazy"
+        decoding="async"
+        className="aspect-[3/5] w-[170px] rounded-[999px_999px_1.25rem_1.25rem] object-cover object-[50%_30%] sm:w-[200px]"
+      />
+    );
+  }
   return (
-    <div className="mt-16 grid items-center gap-10 sm:mt-24 md:grid-cols-12 md:gap-12">
-      <div className="relative isolate md:col-span-5 lg:col-span-4 lg:col-start-2">
-        <ClipReveal from="arch" className="relative mx-auto aspect-[5/9] max-w-[290px] md:max-w-[360px]">
-          <ParallaxImage
-            src={assetUrl("images/bianca-pre-natal.webp")}
-            alt="Dra. Bianca Albuquerque sorrindo enquanto faz o ultrassom na barriga de uma gestante"
-            width={348}
-            height={991}
-            amount={3}
-            position="50% 0%"
-            className="arch h-full w-full bg-rose-100"
-          />
-        </ClipReveal>
-        {/* Arco de contorno, deslocado */}
-        <div aria-hidden className="arch pointer-events-none absolute inset-y-0 left-1/2 -z-10 w-full max-w-[290px] -translate-x-[calc(50%-18px)] translate-y-[18px] border border-rose-300 md:max-w-[360px]" />
-      </div>
-
-      <div className="md:col-span-7 lg:col-span-6 lg:col-start-7">
-        <h3 className="font-display text-[clamp(3.6rem,10vw,7.5rem)] leading-[0.95] tracking-tightest text-rose-500">
-          <SplitWords text="Pré-*natal*" stagger={0} />
-        </h3>
-        <Reveal delay={0.1}>
-          <p className="mt-6 max-w-lg text-pretty text-xl leading-relaxed text-ink sm:text-2xl sm:leading-snug">{PRENATAL.text}</p>
-        </Reveal>
-        <Reveal delay={0.2}>
-          <p className="mt-5 max-w-lg leading-relaxed text-ink-soft">
-            Cada consulta é um espaço para tirar dúvidas, acompanhar o desenvolvimento do bebê e cuidar de você também.
-          </p>
-        </Reveal>
-        <Reveal delay={0.3} className="mt-9">
-          <PrimaryCta location="atendimentos" size="md">
-            Agendar consulta
-          </PrimaryCta>
-        </Reveal>
-      </div>
-    </div>
-  );
-}
-
-function Planning() {
-  return (
-    <Reveal className="relative mt-24 overflow-hidden rounded-[2.5rem] bg-rose-100 sm:mt-32 sm:rounded-[3rem]">
-      <span id="prevencao" className="absolute top-0" aria-hidden />
-      {/* Arcos grandes e claros ao fundo */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="arch absolute -right-24 top-16 h-[130%] w-[26rem] border border-white/70" />
-        <div className="arch absolute -right-10 top-28 h-[130%] w-[22rem] border border-white/60" />
-        <div className="glow absolute -left-40 -top-40 h-[36rem] w-[36rem] [--glow-a:0.7] [--glow:250_247_243]" />
-      </div>
-
-      <div className="relative px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20">
-        <div className="max-w-2xl">
-          <h3 className="font-display text-[clamp(2.2rem,4.6vw,3.8rem)] leading-[1.04] tracking-tightest text-rose-600">
-            <SplitWords text="Prevenção e *planejamento*" />
-          </h3>
-          <p className="mt-5 max-w-xl text-pretty text-lg leading-relaxed text-ink-soft">
-            Engravidar agora, mais para frente ou não engravidar? A gente conversa sobre os seus planos e escolhe junto o melhor caminho.
-          </p>
-        </div>
-
-        <ul className="mt-12 grid lg:mt-14 lg:grid-cols-3">
-          {CARE.map((c, i) => (
-            <motion.li
-              key={c.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-              transition={{ duration: 1.1, ease: EASE_SOFT, delay: i * 0.12 }}
-              className="group relative border-t border-rose-600/15 py-8 lg:border-l lg:border-t-0 lg:px-9 lg:py-2 lg:first:border-l-0 lg:first:pl-0 lg:last:pr-0"
-            >
-              {/* Arco que sobe por trás da coluna no hover */}
-              <span
-                aria-hidden
-                className="arch pointer-events-none absolute inset-x-2 -bottom-4 top-0 hidden origin-bottom scale-y-0 bg-cream-50/60 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-y-100 lg:block lg:inset-x-3"
-              />
-              <div className="relative">
-                <h4 className="font-display text-[2rem] leading-tight tracking-tight text-ink sm:text-[2.3rem]">{c.name}</h4>
-                <p className="mt-3 max-w-sm leading-relaxed text-ink-soft">{c.text}</p>
-                <p className="mt-5 flex max-w-sm items-start gap-2.5 text-[15px] font-medium leading-snug text-rose-700">
-                  <Petal className="mt-[3px] h-4 w-4 shrink-0 text-rose-400 transition-transform duration-700 group-hover:rotate-90" />
-                  {c.note}
-                </p>
-              </div>
-            </motion.li>
-          ))}
-        </ul>
-
-        <div className="mt-10 flex flex-col items-start gap-5 border-t border-rose-600/15 pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-display max-w-md text-2xl leading-snug text-rose-700">
-            Gravidez ou prevenção? <span className="italic">Te ajudo a decidir.</span>
-          </p>
-          <PrimaryCta location="atendimentos" size="md">
-            Agendar consulta
-          </PrimaryCta>
-        </div>
-      </div>
-    </Reveal>
-  );
-}
-
-function Surgery() {
-  return (
-    <div className="mt-24 grid items-center gap-10 sm:mt-32 lg:grid-cols-12 lg:gap-14">
-      <div className="order-2 lg:order-1 lg:col-span-5">
-        <h3 className="font-display text-[clamp(2.2rem,4.4vw,3.7rem)] leading-[1.04] tracking-tightest text-rose-500">
-          <SplitWords text="Cirurgia ginecológica e *laparoscopia*" />
-        </h3>
-        <ul className="mt-9 grid gap-8">
-          {SURGERY.map((s, i) => (
-            <Reveal as="li" key={s.name} delay={0.1 + i * 0.1} className="border-l border-rose-400 pl-6">
-              <p className="font-display text-2xl text-ink">{s.name}</p>
-              <p className="mt-2 leading-relaxed text-ink-soft">{s.text}</p>
-            </Reveal>
-          ))}
-        </ul>
-        <Reveal delay={0.3}>
-          <p className="mt-8 text-[15px] leading-relaxed text-ink-soft">A indicação de cada cirurgia é sempre avaliada na consulta, junto com você.</p>
-        </Reveal>
-        <Reveal delay={0.35} className="mt-8">
-          <PrimaryCta location="atendimentos" size="md">
-            Agendar avaliação
-          </PrimaryCta>
-        </Reveal>
-      </div>
-
-      <div className="order-1 lg:order-2 lg:col-span-7">
-        <ClipReveal from="right" radius={40} className="relative">
-          <ParallaxImage
-            src={assetUrl("images/bianca-cirurgia.webp")}
-            alt="Dra. Bianca Albuquerque no centro cirúrgico, de touca e máscara"
-            width={960}
-            height={635}
-            amount={6}
-            position="50% 30%"
-            className="aspect-[4/3] rounded-[2.5rem] bg-cream-300 sm:aspect-[3/2]"
-          />
-        </ClipReveal>
-      </div>
-    </div>
+    <img
+      src={assetUrl("images/bianca-cirurgia.webp")}
+      alt="Dra. Bianca Albuquerque no centro cirúrgico, de touca e máscara"
+      width={960}
+      height={635}
+      loading="lazy"
+      decoding="async"
+      className="aspect-[4/3] w-full max-w-[300px] rounded-[1.25rem] object-cover object-[50%_30%]"
+    />
   );
 }

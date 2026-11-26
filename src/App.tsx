@@ -7,9 +7,9 @@ import { RESPECT_REDUCED_MOTION } from "./lib/motion-pref";
 import { CookieNotice, FloatingContact, Nav, Preloader, ScrollProgress } from "./components/chrome";
 import { Hero } from "./sections/Hero";
 import { Services } from "./sections/Services";
-import { About } from "./sections/About";
+import { About, Mission } from "./sections/About";
+import { Story } from "./sections/Story";
 import { Places } from "./sections/Places";
-import { Steps } from "./sections/Steps";
 import { Faq } from "./sections/Faq";
 import { Contact } from "./sections/Contact";
 import { Footer } from "./sections/Footer";
@@ -50,7 +50,7 @@ export default function App() {
   return (
     // Ver lib/motion-pref.ts: "user" = quem pediu menos movimento no sistema vê a versão calma.
     <MotionConfig reducedMotion={RESPECT_REDUCED_MOTION ? "user" : "never"}>
-      <a href="#atendimentos" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[90] focus:rounded-full focus:bg-rose-600 focus:px-5 focus:py-3 focus:text-white">
+      <a href="#sobre" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[90] focus:rounded-full focus:bg-rose-500 focus:px-5 focus:py-3 focus:text-cream">
         Pular para o conteúdo
       </a>
       <Preloader onDone={onIntroDone} />
@@ -58,10 +58,11 @@ export default function App() {
       <Nav />
       <main className="paper">
         <Hero ready={ready} />
-        <Services />
         <About />
+        <Mission />
+        <Services />
+        <Story />
         <Places />
-        <Steps />
         <Faq />
         <Contact />
       </main>

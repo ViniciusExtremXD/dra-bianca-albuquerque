@@ -1,70 +1,33 @@
-import { motion } from "framer-motion";
-import { DOCTOR } from "../data/site";
-import { MARK_ARCH, MARK_LETTERS, MARK_VIEWBOX } from "./brand-paths";
-import { EASE_IN_OUT, EASE_OUT } from "./motion";
+import { DOCTOR, SEAL, assetUrl } from "../data/site";
 
-/*
- * Monograma: B reto + A itálico (Fraunces fina) dentro de um arco, o mesmo arco das fotos.
- * `draw` desenha o arco e acende as letras (abertura do site).
- */
-export function Monogram({
-  className,
-  arch = "#B98583",
-  letters = "#8E5A5B",
-  strokeWidth = 1.6,
-  draw = false,
-  title,
-}: {
-  className?: string;
-  arch?: string;
-  letters?: string;
-  strokeWidth?: number;
-  draw?: boolean;
-  title?: string;
-}) {
+/* O selo de cera oficial (brand kit). Nunca redesenhado: sempre a imagem. */
+export function Seal({ className, alt = "", eager = false }: { className?: string; alt?: string; eager?: boolean }) {
   return (
-    <svg viewBox={MARK_VIEWBOX} className={className} role={title ? "img" : undefined} aria-hidden={title ? undefined : true} aria-label={title}>
-      <motion.path
-        d={MARK_ARCH}
-        fill="none"
-        stroke={arch}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        initial={draw ? { pathLength: 0, opacity: 0 } : false}
-        animate={draw ? { pathLength: 1, opacity: 1 } : undefined}
-        transition={{ pathLength: { duration: 1.3, ease: EASE_IN_OUT }, opacity: { duration: 0.2 } }}
-      />
-      {MARK_LETTERS.map((l, i) => (
-        <motion.path
-          key={i}
-          d={l.d}
-          transform={l.transform}
-          fill={letters}
-          initial={draw ? { opacity: 0 } : false}
-          animate={draw ? { opacity: 1 } : undefined}
-          transition={{ duration: 0.9, ease: EASE_OUT, delay: 0.55 + i * 0.18 }}
-        />
-      ))}
-    </svg>
+    <img
+      src={assetUrl(SEAL.src)}
+      alt={alt}
+      aria-hidden={alt ? undefined : true}
+      width={SEAL.width}
+      height={SEAL.height}
+      decoding="async"
+      loading={eager ? "eager" : undefined}
+      className={className}
+      draggable={false}
+    />
   );
 }
 
-/* Monograma + nome + registro. O CRM/RQE fica no cabeçalho em todas as larguras (regra do CFM). */
+/* Cabeçalho: selo pequeno + nome na serifada + CRM/RQE embaixo (regra do CFM, em todas as larguras). */
 export function Wordmark({ tone = "light", compact = false }: { tone?: "light" | "dark"; compact?: boolean }) {
   const dark = tone === "dark";
   return (
     <span className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-      <Monogram
-        className={compact ? "h-10 w-auto shrink-0" : "h-11 w-auto shrink-0 sm:h-12"}
-        arch={dark ? "#D9B3AF" : "#B98583"}
-        letters={dark ? "#FAF7F3" : "#8E5A5B"}
-      />
+      <Seal className={`${compact ? "h-10" : "h-10 sm:h-11"} w-auto shrink-0 drop-shadow-[0_4px_6px_rgba(85,48,47,0.25)]`} eager />
       <span className="min-w-0 leading-none">
-        <span className={`font-display block whitespace-nowrap text-[15px] tracking-tight min-[360px]:text-[17px] sm:text-[19px] ${dark ? "text-cream-100" : "text-ink"}`}>
+        <span className={`font-display block whitespace-nowrap text-[16px] tracking-tight min-[360px]:text-[17.5px] sm:text-[20px] ${dark ? "text-cream" : "text-ink"}`}>
           {DOCTOR.name}
         </span>
-        <span className={`mt-1 block whitespace-nowrap text-[10.5px] font-medium tracking-wide min-[360px]:text-[11px] ${dark ? "text-rose-300" : "text-rose-600"}`}>
-          <span className="hidden sm:inline">Ginecologia e Obstetrícia · </span>
+        <span className={`mt-1.5 block whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.16em] min-[360px]:text-[10.5px] ${dark ? "text-rose-200" : "text-rose-500"}`}>
           {DOCTOR.registry}
         </span>
       </span>

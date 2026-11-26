@@ -1,7 +1,8 @@
 /*
  * Conteúdo do site. Fontes: Instagram oficial @biancasantanaalbuquerque (bio, carrossel
- * "Essa é a Dra. Bianca que você ainda não conhece", legendas dos serviços) e o perfil do
- * consultório no Google. Só entra aqui o que foi confirmado; o resto está no README ("a confirmar").
+ * "Essa é a Dra. Bianca que você ainda não conhece", legendas dos serviços), os rascunhos do
+ * Canva enviados pela cliente (Sobre mim, Minha missão, lista de atendimentos, Spazio Vita, horários)
+ * e o perfil do consultório no Google. O que ainda precisa de confirmação está no README.
  */
 
 import { originTag } from "../lib/attribution";
@@ -19,21 +20,60 @@ export const DOCTOR = {
   whatsappNumber: "5596981144205",
   instagramHandle: "biancasantanaalbuquerque",
   instagramUrl: "https://www.instagram.com/biancasantanaalbuquerque/",
+  /* Rascunho do Canva: "Spazio Vita — Avenida Henrique Galucio, 1054, Centro". O Google diz bairro "Central". */
+  clinic: "Spazio Vita",
   address: {
     street: "Av. Henrique Galucio, 1054",
-    district: "Central",
-    city: "Macapá - AP",
+    district: "Centro",
+    city: "Macapá/AP",
     cep: "68900-115",
-    oneLine: "Av. Henrique Galucio, 1054 - Central, Macapá - AP, 68900-115",
+    oneLine: "Av. Henrique Galucio, 1054, Centro, Macapá/AP, 68900-115",
   },
-  mapsUrl: "https://www.google.com/maps/search/?api=1&query=Av.+Henrique+Galucio%2C+1054+-+Central%2C+Macap%C3%A1+-+AP%2C+68900-115",
-  mapsEmbed: "https://www.google.com/maps?q=Av.+Henrique+Galucio,+1054+-+Central,+Macap%C3%A1+-+AP,+68900-115&hl=pt-BR&z=16&output=embed",
+  /* Rascunho do Canva (a confirmar, ver README). */
+  hours: [
+    { days: "Segunda a sexta", time: "08h às 18h" },
+    { days: "Sábado", time: "08h às 12h" },
+  ],
+  openingHours: [
+    { dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "08:00", closes: "18:00" },
+    { dayOfWeek: ["Saturday"], opens: "08:00", closes: "12:00" },
+  ],
+  mapsUrl: "https://www.google.com/maps/search/?api=1&query=Av.+Henrique+Galucio%2C+1054+-+Macap%C3%A1+-+AP%2C+68900-115",
+  mapsEmbed: "https://www.google.com/maps?q=Av.+Henrique+Galucio,+1054+-+Macap%C3%A1+-+AP,+68900-115&hl=pt-BR&z=16&output=embed",
 };
 
 export function assetUrl(path: string): string {
   const base = import.meta.env.BASE_URL || "/";
   return `${base.endsWith("/") ? base : `${base}/`}${path.replace(/^\//, "")}`;
 }
+
+/* Ensaio oficial (Isabela Pimentel, jun/2025): cada foto em 720 e 1200 px de largura. */
+export type Shoot =
+  | "blazer-branco-sorriso"
+  | "blazer-branco-sentada"
+  | "maos-no-rosto-sorriso"
+  | "retrato-fundo-escuro"
+  | "anotando-tablet"
+  | "cadeira-blusa-branca"
+  | "poltrona-terno-bege"
+  | "terno-bege-olhar"
+  | "terno-bege-sorriso"
+  | "detalhe-livro-notebook"
+  | "preto-mao-no-queixo"
+  | "preto-sorriso"
+  | "terno-bege-caminhando"
+  | "banco-branco-sentada";
+
+export function shoot(name: Shoot) {
+  return {
+    src: assetUrl(`images/ensaio/${name}-1200.webp`),
+    srcSet: `${assetUrl(`images/ensaio/${name}-720.webp`)} 720w, ${assetUrl(`images/ensaio/${name}-1200.webp`)} 1200w`,
+    width: 1200,
+    height: name === "detalhe-livro-notebook" ? 801 : 1798,
+  };
+}
+
+export const SEAL = { src: "images/selo-bianca.webp", width: 640, height: 610 };
 
 /* Uma mensagem só para todos os botões: o texto do WhatsApp nunca leva o nome de um procedimento (dado de saúde). */
 export const DEFAULT_WA_MESSAGE = "Olá! Vim pelo site da Dra. Bianca Albuquerque e gostaria de agendar uma consulta.";
@@ -87,11 +127,27 @@ export function trackLead(channel: LeadChannel, location: string) {
 /* ───────────────────────── Navegação ───────────────────────── */
 
 export const NAV_LINKS = [
-  { href: "#atendimentos", label: "Atendimentos" },
   { href: "#sobre", label: "Sobre mim" },
-  { href: "#onde-atendo", label: "Onde atendo" },
+  { href: "#atendimentos", label: "Atendimentos" },
+  { href: "#historia", label: "Minha história" },
+  { href: "#consultorio", label: "Consultório" },
   { href: "#duvidas", label: "Dúvidas" },
   { href: "#contato", label: "Contato" },
+];
+
+/* ───────────────────────── Sobre mim e missão (textos dela, rascunhos do Canva) ───────────────────────── */
+
+export const ABOUT =
+  "Sou Dra. Bianca, médica ginecologista e obstetra formada pela Universidade Federal do Amapá (UNIFAP). Além do meu consultório particular, tenho a honra de trabalhar nas maternidades Mãe Luzia, Bem Nascer e no Hospital São Camilo.";
+
+/* Legenda do Instagram, como citação */
+export const PASSION =
+  "Sou apaixonada pela Medicina, pelo cuidado com as mulheres e por estar presente nos momentos mais importantes da vida delas.";
+
+export const MISSION = [
+  "Minha missão é proporcionar atendimento de excelência, sempre focado na sua saúde e no seu bem-estar.",
+  "Sempre buscando as melhores opções para atender às suas necessidades e expectativas.",
+  "Estou aqui para cuidar de você em todas as fases da sua vida, com atenção e profissionalismo.",
 ];
 
 /* ───────────────────────── Minha história ───────────────────────── */
@@ -130,53 +186,53 @@ export const STORY: { when: string; title: string; text: string }[] = [
   },
 ];
 
-export const MISSION =
-  "Sou apaixonada pela Medicina, pelo cuidado com as mulheres e por estar presente nos momentos mais importantes da vida delas.";
-export const MISSION_GOAL =
-  "Na ginecologia ou obstetrícia, meu objetivo é oferecer um atendimento humano, acolhedor e que faça a diferença na vida das minhas pacientes.";
+/* ───────────────────────── Atendimentos (lista e nomes dela; descrições do carrossel) ───────────────────────── */
 
-/* ───────────────────────── Atendimentos (descrições da própria Dra. Bianca) ───────────────────────── */
+export type ServiceMedia = "ultrassom" | "cirurgia";
 
-export const PRENATAL = {
-  name: "Pré-natal",
-  text: "Acompanhamento completo da gestante, monitorando a saúde da mãe e do bebê em todas as fases da gravidez.",
-};
-
-export const CARE: { id: string; name: string; text: string; note: string }[] = [
+export const SERVICES: { id: string; name: string; short: string; text: string[]; note?: string; media?: ServiceMedia }[] = [
   {
-    id: "ginecologia",
-    name: "Ginecologia e prevenção",
-    text: "Consulta ginecológica de rotina para cuidar da sua saúde íntima e manter a prevenção em dia.",
-    note: "Um bom momento para tirar dúvidas e conversar sobre os seus planos.",
+    id: "obstetrico",
+    name: "Acompanhamento obstétrico",
+    short: "pré-natal",
+    text: ["Acompanhamento completo da gestante, monitorando a saúde da mãe e do bebê em todas as fases da gravidez."],
+    media: "ultrassom",
+  },
+  {
+    id: "ginecologico",
+    name: "Acompanhamento ginecológico",
+    short: "rotina e prevenção",
+    text: ["Consulta ginecológica de rotina para cuidar da sua saúde íntima e manter a prevenção em dia. Um bom momento para tirar dúvidas e conversar sobre os seus planos."],
+  },
+  {
+    id: "laparoscopia",
+    name: "Laparoscopia",
+    short: "cirurgia por vídeo",
+    text: [
+      "Cirurgia por vídeo, com cortes pequenos, menos dor e recuperação mais rápida. Indicada para endometriose, miomas, cistos e até gravidez ectópica.",
+      "Também faço cirurgias ginecológicas, minimamente invasivas ou tradicionais, para tratar endometriose, miomas, cistos e outras condições.",
+    ],
+    media: "cirurgia",
   },
   {
     id: "diu",
-    name: "DIU",
-    text: "Um método contraceptivo seguro, que previne a gravidez por anos sem precisar lembrar todos os dias.",
+    name: "Inserção de DIU",
+    short: "hormonal ou de cobre",
+    text: ["Um método contraceptivo seguro, que previne a gravidez por anos sem precisar lembrar todos os dias."],
     note: "Pode ser hormonal ou de cobre.",
   },
   {
     id: "implanon",
-    name: "Implanon",
-    text: "Implante contraceptivo altamente eficaz, discreto e de longa duração. Perfeito para quem quer praticidade e segurança no planejamento familiar.",
+    name: "Inserção de Implanon",
+    short: "implante contraceptivo",
+    text: ["Implante contraceptivo altamente eficaz, discreto e de longa duração. Perfeito para quem quer praticidade e segurança no planejamento familiar."],
     note: "A Anvisa aprovou a extensão da eficácia contraceptiva para 5 anos.",
-  },
-];
-
-export const SURGERY = [
-  {
-    name: "Cirurgia ginecológica",
-    text: "Procedimentos minimamente invasivos ou tradicionais para tratar endometriose, miomas, cistos e outras condições.",
-  },
-  {
-    name: "Laparoscopia",
-    text: "Cirurgia por vídeo, com cortes pequenos, menos dor e recuperação mais rápida. Indicada para endometriose, miomas, cistos e até gravidez ectópica.",
   },
 ];
 
 /* ───────────────────────── Onde atendo ───────────────────────── */
 
-export const MATERNITIES = ["Bem Nascer", "Maternidade Mãe Luzia", "Hospital São Camilo"];
+export const MATERNITIES = ["Maternidade Mãe Luzia", "Bem Nascer", "Hospital São Camilo"];
 
 /* ───────────────────────── Dúvidas (só o que sai dos fatos confirmados; sem preço, sem convênio, sem promessa) ───────────────────────── */
 
@@ -199,7 +255,7 @@ export const FAQ = [
   },
   {
     q: "Onde a Dra. Bianca atende?",
-    a: `As consultas são presenciais, no meu consultório: ${DOCTOR.address.oneLine}. Também atuo nas maternidades Bem Nascer, Maternidade Mãe Luzia e no Hospital São Camilo.`,
+    a: `As consultas são presenciais, no ${DOCTOR.clinic}: ${DOCTOR.address.oneLine}. Também atuo nas maternidades Mãe Luzia, Bem Nascer e no Hospital São Camilo.`,
   },
   {
     q: "Como faço para agendar?",
